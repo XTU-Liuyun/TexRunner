@@ -1,3 +1,3 @@
 ﻿
-using var game = new TexRunner.Game1();
+using var game = new TexRunner.TexGunnerGame();
 game.Run();

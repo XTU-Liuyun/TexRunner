@@ -1,0 +1,5 @@
+Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
+"D:/TexRunnerGame/TexRunner/Content/button-press.mp3","D:/TexRunnerGame/TexRunner/bin/Debug/net6.0/Content/button-press.xnb","SoundEffectProcessor","SoundEffectContent",5178,25449,0.194963
+"D:/TexRunnerGame/TexRunner/Content/hit.mp3","D:/TexRunnerGame/TexRunner/bin/Debug/net6.0/Content/hit.xnb","SoundEffectProcessor","SoundEffectContent",7212,52073,0.1089408
+"D:/TexRunnerGame/TexRunner/Content/score-reached.mp3","D:/TexRunnerGame/TexRunner/bin/Debug/net6.0/Content/score-reached.xnb","SoundEffectProcessor","SoundEffectContent",9250,101737,0.1041896
+"D:/TexRunnerGame/TexRunner/Content/TrexSpritesheet.png","D:/TexRunnerGame/TexRunner/bin/Debug/net6.0/Content/TrexSpritesheet.xnb","TextureProcessor","Texture2DContent",2433,335461,0.1221615
