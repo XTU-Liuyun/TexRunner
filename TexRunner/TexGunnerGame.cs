@@ -20,6 +20,7 @@ namespace TexRunner
         private SoundEffect _sfxButtonPress;
         private SoundEffect _sfxScoreReached;
         private Texture2D _spriteSheetTexture;
+       
 
         private Trex _trex;
 
@@ -54,6 +55,7 @@ namespace TexRunner
             _sfxHit = Content.Load<SoundEffect>(ASSET_NAME_SFX_HIT);
             _spriteSheetTexture = Content.Load<Texture2D>(ASSET_NAME_SPRITESHEET);
             _trex = new Trex(_spriteSheetTexture, new Vector2(TREX_START_POS_X, TREX_START_POS_Y-Trex.TREX_DEFAULT_SPRITE_HEIGHT));
+            
         }
 
         protected override void Update(GameTime gameTime)
