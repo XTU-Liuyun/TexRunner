@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using TexRunner.Entities;
 using TexRunner.Graphics;
+using TexRunner.System;
 
 namespace TexRunner
 {
@@ -23,7 +24,7 @@ namespace TexRunner
        
 
         private Trex _trex;
-
+        private InputController _inputController;
         public const int WINDOW_HEIGHT = 150;
         public const int WINDOW_WIDTH = 600;
         public const int TREX_START_POS_X = 1;
@@ -55,8 +56,8 @@ namespace TexRunner
             _sfxScoreReached = Content.Load<SoundEffect>(ASSET_NAME_SFX_SCORE_REACHED);
             _sfxHit = Content.Load<SoundEffect>(ASSET_NAME_SFX_HIT);
             _spriteSheetTexture = Content.Load<Texture2D>(ASSET_NAME_SPRITESHEET);
-            _trex = new Trex(_spriteSheetTexture, new Vector2(TREX_START_POS_X, TREX_START_POS_Y-Trex.TREX_DEFAULT_SPRITE_HEIGHT));
-            
+            _trex = new Trex(_spriteSheetTexture, new Vector2(TREX_START_POS_X, TREX_START_POS_Y-Trex.TREX_DEFAULT_SPRITE_HEIGHT),_sfxButtonPress);
+            _inputController = new InputController(_trex);
         }
 
         protected override void Update(GameTime gameTime)
@@ -67,7 +68,9 @@ namespace TexRunner
             // TODO: Add your update logic here
 
             base.Update(gameTime);
+
             _trex.Update(gameTime);
+            _inputController.ProcessControls(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
