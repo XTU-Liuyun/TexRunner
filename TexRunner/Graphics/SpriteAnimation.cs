@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,8 +25,21 @@ namespace TexRunner.Graphics
             get
             {
                 return _frames.Where(f=>f.TimeStamp<=PlaybackProgress).OrderBy(f=>f.TimeStamp).LastOrDefault();
+                
             }
         }
+        public float Duration
+        {
+            get
+            {
+                if(!_frames.Any())
+                {
+                    return 0f;
+                }
+                return _frames.Max(f => f.TimeStamp);
+            }
+        }
+        public bool loop { get; set; } = true;
         public bool IsPlaying {  get; private set; }    
         public float PlaybackProgress { get; private set; }
         public void AddFrame(Sprite sprite, float timeStamp) 
@@ -35,9 +50,34 @@ namespace TexRunner.Graphics
         }
         public void Update(GameTime gameTime)
         {
-            if(IsPlaying)
+            
+            if (IsPlaying)
             {
+                
                 PlaybackProgress += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                if(PlaybackProgress>Duration&&loop)
+                {
+                    
+                    if(loop)
+                    {
+                        PlaybackProgress -= Duration;
+                    }
+                    else
+                    {
+                        Debug.WriteLine("stop");
+                        Stop();
+                    }
+
+                }
+                
+            }
+        }
+        public void Draw(SpriteBatch spriteBatch,Vector2 position)
+        {
+            SpriteAnimationFrame frame = CurrentFrame;
+            if(frame != null) 
+            {
+                frame.Sprite.Draw(spriteBatch, position);   
             }
         }
         public void Play()

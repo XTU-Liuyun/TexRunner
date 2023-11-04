@@ -42,6 +42,7 @@ namespace TexRunner
             base.Initialize();
             _graphics.PreferredBackBufferWidth = WINDOW_WIDTH;
             _graphics.PreferredBackBufferHeight = WINDOW_HEIGHT;
+            
             _graphics.ApplyChanges();
         }
 
@@ -66,11 +67,12 @@ namespace TexRunner
             // TODO: Add your update logic here
 
             base.Update(gameTime);
+            _trex.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.White);
 
             _spriteBatch.Begin();
             _trex.Draw(_spriteBatch, gameTime);
@@ -79,6 +81,7 @@ namespace TexRunner
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);
+            
         }
     }
 }
