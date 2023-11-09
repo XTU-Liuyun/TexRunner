@@ -168,11 +168,22 @@ namespace TexRunner.Entities
         }
         public bool Duck()
         {
-            if(State==TrexState.Jumping||State==TrexState.Falling)
+            if (State == TrexState.Jumping || State == TrexState.Falling)
             {
                 return false;
             }
-            State= TrexState.Ducking;
+            State = TrexState.Ducking;
+            return true;
+        }
+        public bool GetUp()
+        {
+            if(State!=TrexState.Ducking) return false;
+            State= TrexState.Running;
+            return true;
+        }
+        public bool Drop()
+        {
+            //if(State==)
             return true;
         }
     }

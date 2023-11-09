@@ -29,11 +29,14 @@ namespace TexRunner
         public const int WINDOW_WIDTH = 600;
         public const int TREX_START_POS_X = 1;
         public const int TREX_START_POS_Y= WINDOW_HEIGHT-16;
+        private GroundManager _groundManager;
+        private EntityManager _entityManager;
         public TexGunnerGame()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+            _entityManager = new EntityManager();
         }
 
         protected override void Initialize()
@@ -58,6 +61,9 @@ namespace TexRunner
             _spriteSheetTexture = Content.Load<Texture2D>(ASSET_NAME_SPRITESHEET);
             _trex = new Trex(_spriteSheetTexture, new Vector2(TREX_START_POS_X, TREX_START_POS_Y-Trex.TREX_DEFAULT_SPRITE_HEIGHT),_sfxButtonPress);
             _inputController = new InputController(_trex);
+            _groundManager = new GroundManager(_spriteSheetTexture, _entityManager);
+            _entityManager.AddEntity(_trex);
+            _groundManager.Initialize();
         }
 
         protected override void Update(GameTime gameTime)
@@ -69,7 +75,7 @@ namespace TexRunner
 
             base.Update(gameTime);
 
-            _trex.Update(gameTime);
+            _entityManager.Update(gameTime);
             _inputController.ProcessControls(gameTime);
         }
 
@@ -78,7 +84,7 @@ namespace TexRunner
             GraphicsDevice.Clear(Color.White);
 
             _spriteBatch.Begin();
-            _trex.Draw(_spriteBatch, gameTime);
+            _entityManager.Draw(gameTime, _spriteBatch);
             _spriteBatch.End();
 
             // TODO: Add your drawing code here
