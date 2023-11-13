@@ -42,10 +42,11 @@ namespace TexRunner.Entities
         private SpriteAnimation _runAnimation;
         private SpriteAnimation _duckAnimation;
         private Random _random;
+        public event EventHandler JumpComplete;
         public TrexState State { get; private set; }    
         public Vector2 Position { get; set; }
         public bool IsAlive {  get; private set; }
-        public float Speed {  get; private set; }
+        public float Speed { get; private set; }
         private float _verticalVelocity;
         private float _startPosY;
         
@@ -126,6 +127,8 @@ namespace TexRunner.Entities
                     Position=new Vector2(Position.X,_startPosY);
                     _verticalVelocity = 0;
                     State = TrexState.Running;
+                    OnJumpComplete();
+                    
                 }
             }
             else if(State == TrexState.Running) 
@@ -185,6 +188,11 @@ namespace TexRunner.Entities
         {
             //if(State==)
             return true;
+        }
+        protected virtual void OnJumpComplete()
+        {
+            EventHandler handler = JumpComplete;
+            handler?.Invoke(this, EventArgs.Empty);
         }
     }
 }
