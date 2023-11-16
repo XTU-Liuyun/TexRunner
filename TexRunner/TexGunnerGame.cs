@@ -27,6 +27,7 @@ namespace TexRunner
         private float _fadeInTexturePosX;
         private Trex _trex;
         private InputController _inputController;
+        private ScoreBoard _scoreBoard; 
         public const int WINDOW_HEIGHT = 150;
         public const int WINDOW_WIDTH = 600;
         public const int TREX_START_POS_X = 1;
@@ -70,11 +71,24 @@ namespace TexRunner
             _fadeInTexture.SetData(new Color[] { Color.White}) ;
             _trex = new Trex(_spriteSheetTexture, new Vector2(TREX_START_POS_X, TREX_START_POS_Y-Trex.TREX_DEFAULT_SPRITE_HEIGHT),_sfxButtonPress);
             _trex.DrawOrder = 10;
+            _trex.JumpComplete += trex_JumpComplete;
+            _scoreBoard = new ScoreBoard(_spriteSheetTexture,new Vector2(WINDOW_WIDTH - 100, 10));
+            _scoreBoard.Score = 498;
             _inputController = new InputController(_trex);
             _groundManager = new GroundManager(_spriteSheetTexture, _entityManager,_trex);
             _entityManager.AddEntity(_trex);
             _entityManager.AddEntity(_groundManager);
+            _entityManager.AddEntity(_scoreBoard);
             _groundManager.Initialize();
+        }
+
+        private void trex_JumpComplete(object sender, EventArgs e)
+        {
+            if(State==GameState.Transition)
+            {
+                State = GameState.Playing;
+                _trex.Initialize();
+            }
         }
 
         protected override void Update(GameTime gameTime)

@@ -35,6 +35,7 @@ namespace TexRunner.Entities
         private const int TREX_DUCKING_SPRITE_ONE_POS_X = TREX_DEFAULT_SPRITE_POS_X + TREX_DEFAULT_SPRITE_WIDTH * 6;
         private const int TREX_DUCKING_SPRITE_ONE_POS_Y = 0;
         private const float RUN_ANIMATION_FRAME_LENGTH = 1 / 10f;
+        private const float START_SPEED = 240f;
         private Sprite _idleSprite;
         private Sprite _idleBlinkSprite;
         private SoundEffect _jumpSound;
@@ -79,6 +80,11 @@ namespace TexRunner.Entities
             _duckAnimation.AddFrame(new Sprite(spriteSheet, TREX_DUCKING_SPRITE_ONE_POS_X + TREX_DUCKING_SPRITE_WIDTH, TREX_DUCKING_SPRITE_ONE_POS_Y, TREX_DUCKING_SPRITE_WIDTH, TREX_DEFAULT_SPRITE_HEIGHT), RUN_ANIMATION_FRAME_LENGTH);
             _duckAnimation.AddFrame(_duckAnimation[0].Sprite, RUN_ANIMATION_FRAME_LENGTH * 2);
             _duckAnimation.Play();
+        }
+        public void Initialize()
+        {
+            Speed = START_SPEED;
+            State = TrexState.Running;
         }
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
