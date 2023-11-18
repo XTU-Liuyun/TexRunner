@@ -32,6 +32,8 @@ namespace TexRunner
         public const int WINDOW_WIDTH = 600;
         public const int TREX_START_POS_X = 1;
         public const int TREX_START_POS_Y= WINDOW_HEIGHT-16;
+        private const int SCORE_BOARD_POS_X = WINDOW_WIDTH-130;
+        private const int SCORE_BOARD_POS_Y = 10;
         private GroundManager _groundManager;
         private EntityManager _entityManager;
         private KeyboardState _previousKeyBoardState;
@@ -72,8 +74,9 @@ namespace TexRunner
             _trex = new Trex(_spriteSheetTexture, new Vector2(TREX_START_POS_X, TREX_START_POS_Y-Trex.TREX_DEFAULT_SPRITE_HEIGHT),_sfxButtonPress);
             _trex.DrawOrder = 10;
             _trex.JumpComplete += trex_JumpComplete;
-            _scoreBoard = new ScoreBoard(_spriteSheetTexture,new Vector2(WINDOW_WIDTH - 100, 10));
-            _scoreBoard.Score = 498;
+            _scoreBoard = new ScoreBoard(_spriteSheetTexture,new Vector2(SCORE_BOARD_POS_X, SCORE_BOARD_POS_Y),_trex);
+            //_scoreBoard.Score = 498;
+            //_scoreBoard.HighScore = 12345;
             _inputController = new InputController(_trex);
             _groundManager = new GroundManager(_spriteSheetTexture, _entityManager,_trex);
             _entityManager.AddEntity(_trex);

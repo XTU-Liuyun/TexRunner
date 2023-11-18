@@ -15,38 +15,59 @@ namespace TexRunner.Entities
         private const int TEXTURE_COORDS_NUMBER_WIDTH = 10;
         private const int TEXTURE_COORDS_NUMBER_HEIGHT = 13;
         private const byte NUMBER_DIGITS_TO_DRAW = 5;
+        private const int TEXTURE_COORDS_HI_X = 755;
+        private const int TEXTURE_COORDS_HI_Y = 0;
+        private const int TEXTURE_COORDS_HI_WIDTH = 20;
+        private const int TEXTURE_COORDS_HI_HEIGHT = 13;
+        private const int HI_TEXT_MARGIN=28;
+
+        private const int SCORE_MARGIN = 60;
+        private const float SCORE_INCREMENT_MULTIPLIER = 0.05f;
         private Texture2D _texture;
 
        
         public double Score { get; set; }   
         public int DisplayScore=>(int)Math.Floor((double)Score);    
         public int HighScore {  get; set; }
+        public bool HasHighScore => HighScore > 0;
 
         public int DrawOrder => 100;
-        public Vector2 Position { get; set; }   
-        public ScoreBoard(Texture2D texture,Vector2 position)
+        public Vector2 Position { get; set; }
+        private Trex _trex;
+        public ScoreBoard(Texture2D texture,Vector2 position,Trex trex)
         {
             _texture = texture;
             Position = position;
+            _trex = trex;
         }
-
+        public void Update(GameTime gameTime)
+        {
+            Score += _trex.Speed * SCORE_INCREMENT_MULTIPLIER * gameTime.ElapsedGameTime.TotalSeconds;
+        }
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            int[] scoreDigits = SplitDigits(DisplayScore);
-            float posX = Position.X;
+            DrawScore(spriteBatch,DisplayScore,Position.X+ SCORE_MARGIN);
+            if (HasHighScore)
+            {
+                spriteBatch.Draw(_texture, new Vector2(Position.X - HI_TEXT_MARGIN, Position.Y), new Rectangle(TEXTURE_COORDS_HI_X, TEXTURE_COORDS_HI_Y, TEXTURE_COORDS_HI_WIDTH, TEXTURE_COORDS_HI_HEIGHT), Color.White);
+                DrawScore(spriteBatch, HighScore, Position.X);
+            }
+        }
+
+        private void DrawScore(SpriteBatch spriteBatch,int score,float startPosX)
+        {
+            int[] scoreDigits = SplitDigits(score);
+            float posX = startPosX;
             foreach (int scoreDigit in scoreDigits)
             {
-                Rectangle textureCoords=GetDigitTextureCoords(scoreDigit);
-                Vector2 screenPos=new Vector2(posX,Position.Y);
+                Rectangle textureCoords = GetDigitTextureCoords(scoreDigit);
+                Vector2 screenPos = new Vector2(posX, Position.Y);
                 spriteBatch.Draw(_texture, screenPos, textureCoords, Color.White);
                 posX += TEXTURE_COORDS_NUMBER_WIDTH;
             }
         }
 
-        public void Update(GameTime gameTime)
-        {
-            
-        }
+        
         private int[] SplitDigits(int input)
         {
             string inputStr=input.ToString().PadLeft(NUMBER_DIGITS_TO_DRAW,'0');
