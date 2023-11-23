@@ -60,5 +60,10 @@ namespace TexRunner.Entities
         {
             _entitiesToRemove.AddRange(_entities);
         }
+        public IEnumerable<T> GetEntitiesOfType<T>()where T : IGameEntity
+        {
+            return _entities.OfType<T>();
+            
+        }
     }
 }
