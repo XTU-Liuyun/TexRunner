@@ -17,13 +17,15 @@ namespace TexRunner.Entities
         private readonly ScoreBoard _scoreBoard;
         public bool IsEnabled {  get; set; }
         private readonly Random _random;
+        private Texture2D _spriteSheet;
         public bool CanSpawnObstacles => IsEnabled && _scoreBoard.Score >= MIN_OBSTACLE_DISTANCE;
-        public ObstacleManager(EntityManager entityManager, Trex trex,ScoreBoard scoreBoard)
+        public ObstacleManager(EntityManager entityManager, Trex trex,ScoreBoard scoreBoard,Texture2D spriteSheet)
         {
             _entityManager = entityManager;
             _trex = trex;
             _scoreBoard = scoreBoard;
             _random = new Random();
+            _spriteSheet = spriteSheet;
         }
 
         public int DrawOrder => 0;
@@ -57,7 +59,13 @@ namespace TexRunner.Entities
 
         private void SpawnRandomObstacle()
         {
-            
+            Obstacle obstacle = null;
+            CactusGroup.GroupSize randomGroupSize =(CactusGroup.GroupSize)_random.Next((int)CactusGroup.GroupSize.Small,(int)CactusGroup.GroupSize.Large+1);
+            bool isLarge = _random.NextDouble() > 0.5f;
+            float posY = isLarge ? 85 : 95;
+            obstacle = new CactusGroup(_spriteSheet,isLarge,randomGroupSize,_trex,new Vector2(TexGunnerGame.WINDOW_WIDTH,posY));
+            _entityManager.AddEntity(obstacle);
+
         }
     }
 }
