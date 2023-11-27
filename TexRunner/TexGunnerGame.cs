@@ -37,6 +37,7 @@ namespace TexRunner
         private GroundManager _groundManager;
         private EntityManager _entityManager;
         private ObstacleManager _obstacleManager;
+        private GameOverScreen _gameOverScreen;
         private KeyboardState _previousKeyBoardState;
         public GameState State { get; private set; }    
         public TexGunnerGame()
@@ -81,10 +82,12 @@ namespace TexRunner
             _inputController = new InputController(_trex);
             _groundManager = new GroundManager(_spriteSheetTexture, _entityManager,_trex);
             _obstacleManager=new ObstacleManager(_entityManager,_trex,_scoreBoard,_spriteSheetTexture);
+            _gameOverScreen = new GameOverScreen(_spriteSheetTexture);
             _entityManager.AddEntity(_trex);
             _entityManager.AddEntity(_groundManager);
             _entityManager.AddEntity(_scoreBoard);
             _entityManager.AddEntity( _obstacleManager);    
+            _entityManager.AddEntity(_gameOverScreen);  
             _groundManager.Initialize();
         }
 
