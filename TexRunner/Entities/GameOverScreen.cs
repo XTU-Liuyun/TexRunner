@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace TexRunner.Entities
     {
         private const int GAME_OVER_TEXTURE_POS_X = 655;
         private const int GAME_OVER_TEXTURE_POS_Y = 14;
-        private const int GAME_OVER_SPRITE_WIDTH = 192;
+        public const int GAME_OVER_SPRITE_WIDTH = 192;
         private const int GAME_OVER_SPRITE_HEIGHT = 14;
 
         private const int BUTTON_TEXTURE_POS_X = 1;
@@ -23,17 +24,22 @@ namespace TexRunner.Entities
         private Sprite _textSprite;
         private Sprite _buttonSprite;
 
-        private Vector2 Position {  get; set; }
+        private TexGunnerGame _game;
+
+        public Vector2 Position { get; set; }
 
         public bool IsEnabled {  get; set; }    
 
-        private Vector2 ButonPosition => Position + new Vector2(GAME_OVER_SPRITE_WIDTH / 2 - BUTTON_SPRITE_WIDTH / 2, GAME_OVER_SPRITE_HEIGHT + 20);
+        private Vector2 ButtonPosition => Position + new Vector2(GAME_OVER_SPRITE_WIDTH / 2 - BUTTON_SPRITE_WIDTH / 2, GAME_OVER_SPRITE_HEIGHT + 20);
 
-        public GameOverScreen(Texture2D spriteSheet)
+        private Rectangle ButtonBounds => new Rectangle(ButtonPosition.ToPoint(), new Point(BUTTON_SPRITE_WIDTH, BUTTON_SPRITE_HEIGHT));
+
+        public GameOverScreen(Texture2D spriteSheet,TexGunnerGame game)
         {
 
             _textSprite=new Sprite(spriteSheet,GAME_OVER_TEXTURE_POS_X,GAME_OVER_TEXTURE_POS_Y,GAME_OVER_SPRITE_WIDTH,GAME_OVER_SPRITE_HEIGHT);
             _buttonSprite = new Sprite(spriteSheet, BUTTON_TEXTURE_POS_X, BUTTON_TEXTURE_POS_Y, BUTTON_SPRITE_WIDTH, BUTTON_SPRITE_HEIGHT);
+            _game = game;
         }
 
         public int DrawOrder =>100;
@@ -42,7 +48,7 @@ namespace TexRunner.Entities
         {
             if(!IsEnabled) return;
             _textSprite.Draw(spriteBatch, Position);
-            _buttonSprite.Draw(spriteBatch, ButonPosition);
+            _buttonSprite.Draw(spriteBatch, ButtonPosition);
         }
 
         public void Update(GameTime gameTime)
@@ -50,6 +56,12 @@ namespace TexRunner.Entities
             if(!IsEnabled)
             {
                 return;
+            }
+            
+            MouseState mouseState=Mouse.GetState();
+            if(ButtonBounds.Contains(mouseState.Position)&&mouseState.LeftButton==ButtonState.Pressed)
+            {
+                _game.Replay();
             }
         }
     }

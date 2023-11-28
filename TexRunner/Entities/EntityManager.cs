@@ -54,7 +54,7 @@ namespace TexRunner.Entities
             {
                 throw new ArgumentNullException(nameof(entity), "Null is not a valid entity.");
             }
-            _entitiesToRemove.Remove(entity);
+            _entitiesToRemove.Add(entity);
         }
         public void Clear()
         {

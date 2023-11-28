@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using TexRunner.Graphics;
 
 namespace TexRunner.Entities
@@ -24,7 +25,19 @@ namespace TexRunner.Entities
         private const int LARGE_CACTUS_SPRITE_WIDTH = 25;
         private const int LARGE_CACTUS_TEXTURE_POS_X = 332;
         private const int LARGE_CACTUS_TEXTURE_POS_Y = 0;
-        public override Rectangle CollisionBox => throw new global::System.NotImplementedException();
+
+        private const int COLLISION_BOX_INSET = 3;
+
+        public override Rectangle CollisionBox
+        {
+            get
+            {
+                Rectangle box= new Rectangle((int)Math.Round(Position.X), (int)Math.Round(Position.Y), Sprite.Width, Sprite.Height);
+                box.Inflate(-COLLISION_BOX_INSET, -COLLISION_BOX_INSET);
+                return box;
+            }
+        }
+
         public GroupSize Size { get; }
         public bool IsLarge {  get;  }  
         public Sprite Sprite { get; private set; }

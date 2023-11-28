@@ -74,5 +74,17 @@ namespace TexRunner.Entities
             _entityManager.AddEntity(obstacle);
 
         }
+        public void Reset()
+        {
+            int i = 1;
+            Console.WriteLine("ok");
+            foreach(Obstacle obstacle in _entityManager.GetEntitiesOfType<Obstacle>())
+            {
+                Console.WriteLine(i++);
+                _entityManager.RemoveEntity(obstacle);
+            }
+            _currentTargetDistance = 0;
+            _lastSpawnScore = 1;
+        }
     }
 }
