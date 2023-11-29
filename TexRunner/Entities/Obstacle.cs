@@ -29,7 +29,7 @@ namespace TexRunner.Entities
         public abstract void Draw(SpriteBatch spriteBatch, GameTime gameTime);
         
 
-        public void Update(GameTime gameTime)
+        public virtual void Update(GameTime gameTime)
         {
             float posX = Position.X - _trex.Speed*(float)gameTime.ElapsedGameTime.TotalSeconds;
             Position=new Vector2 (posX, Position.Y);

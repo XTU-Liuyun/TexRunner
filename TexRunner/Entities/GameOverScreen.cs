@@ -24,6 +24,8 @@ namespace TexRunner.Entities
         private Sprite _textSprite;
         private Sprite _buttonSprite;
 
+        private KeyboardState _previousKeyboardState;
+
         private TexGunnerGame _game;
 
         public Vector2 Position { get; set; }
@@ -59,10 +61,14 @@ namespace TexRunner.Entities
             }
             
             MouseState mouseState=Mouse.GetState();
-            if(ButtonBounds.Contains(mouseState.Position)&&mouseState.LeftButton==ButtonState.Pressed)
+            KeyboardState keyboardState=Keyboard.GetState();    
+            bool isKeyPress=keyboardState.IsKeyDown(Keys.Space)||keyboardState.IsKeyDown(Keys.Up);
+            bool wasKeyPress = _previousKeyboardState.IsKeyDown(Keys.Space) || _previousKeyboardState.IsKeyDown(Keys.Up);
+            if ((ButtonBounds.Contains(mouseState.Position)&&mouseState.LeftButton==ButtonState.Pressed)||(wasKeyPress&&!isKeyPress))
             {
                 _game.Replay();
             }
+            _previousKeyboardState = keyboardState;
         }
     }
 }

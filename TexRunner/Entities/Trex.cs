@@ -248,7 +248,7 @@ namespace TexRunner.Entities
         {
             if(!IsAlive) return false;
             State = TrexState.Idle;
-           
+            
             Speed = 0;
             OnDied();
             IsAlive = false;

@@ -98,6 +98,7 @@ namespace TexRunner
         {
             
             State = GameState.GameOver;
+            _sfxHit.Play(); 
             _obstacleManager.IsEnabled= false;
             _gameOverScreen.IsEnabled = true;
         }
@@ -179,6 +180,8 @@ namespace TexRunner
             _obstacleManager.IsEnabled = true;
             _gameOverScreen.IsEnabled = false;
             _scoreBoard.Score = 0;
+            _groundManager.Initialize();
+            _inputController.BlockInputTemporarily();
             return true;
         }
     }

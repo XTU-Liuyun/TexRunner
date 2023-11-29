@@ -20,6 +20,10 @@ namespace TexRunner.Entities
 
             foreach(IGameEntity entity in _entities)
             {
+                if (_entitiesToRemove.Contains(entity))
+                {
+                    continue;
+                }
                 entity.Update(gameTime);
             }
             foreach(IGameEntity entity in _entitiesToAdd)

@@ -15,6 +15,7 @@ namespace TexRunner.Entities
         private const int SMALL_CACTUS_POS_Y = 94;
         private const int OBSTACLE_DRAW_ORDER = 12;
         private const int OBSTACLE_DESPAWN_POS_X = -200;
+        private const int FLYING_DINO_SPAWN_SCORE_MIN = 150;
         private double _lastSpawnScore=-1;
         private double _currentTargetDistance;
         private readonly EntityManager _entityManager;
