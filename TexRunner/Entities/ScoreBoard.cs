@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -23,9 +24,11 @@ namespace TexRunner.Entities
 
         private const int SCORE_MARGIN = 60;
         private const float SCORE_INCREMENT_MULTIPLIER = 0.05f;
+        private const float FLASH_ANIMATION_FRAME_LENGTH = 0.2f;
+        private const int FLASH_ANIMATION_FLASH_COUNT = 4;
         private Texture2D _texture;
 
-       
+        private SoundEffect _scoreSfx;
         public double Score { get; set; }   
         public int DisplayScore=>(int)Math.Floor((double)Score);    
         public int HighScore {  get; set; }
@@ -34,14 +37,33 @@ namespace TexRunner.Entities
         public int DrawOrder => 100;
         public Vector2 Position { get; set; }
         private Trex _trex;
-        public ScoreBoard(Texture2D texture,Vector2 position,Trex trex)
+
+        private bool _isPlayingFlashAnimation;
+        private float _flashAnimationTime;
+        public ScoreBoard(Texture2D texture,Vector2 position,Trex trex,SoundEffect scoreSfx)
         {
+            _scoreSfx = scoreSfx;
             _texture = texture;
             Position = position;
             _trex = trex;
         }
         public void Update(GameTime gameTime)
         {
+            int oldScore = DisplayScore;
+            if(!_isPlayingFlashAnimation&&(DisplayScore/100!=oldScore/100))
+            {
+                _isPlayingFlashAnimation = true;
+                _flashAnimationTime = 0;
+                _scoreSfx.Play(0.5f,0,0);
+            }
+            if(_isPlayingFlashAnimation)
+            {
+                _flashAnimationTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                if(_flashAnimationTime >= FLASH_ANIMATION_FRAME_LENGTH*FLASH_ANIMATION_FLASH_COUNT*2)
+                {
+                    _isPlayingFlashAnimation= false;    
+                }
+            }
             Score += _trex.Speed * SCORE_INCREMENT_MULTIPLIER * gameTime.ElapsedGameTime.TotalSeconds;
         }
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -50,8 +72,11 @@ namespace TexRunner.Entities
             if (HasHighScore)
             {
                 spriteBatch.Draw(_texture, new Vector2(Position.X - HI_TEXT_MARGIN, Position.Y), new Rectangle(TEXTURE_COORDS_HI_X, TEXTURE_COORDS_HI_Y, TEXTURE_COORDS_HI_WIDTH, TEXTURE_COORDS_HI_HEIGHT), Color.White);
+
                 DrawScore(spriteBatch, HighScore, Position.X);
             }
+            if (!_isPlayingFlashAnimation || (int)(_flashAnimationTime / FLASH_ANIMATION_FRAME_LENGTH) % 2 != 0) 
+                DrawScore(spriteBatch, DisplayScore, Position.X + SCORE_MARGIN);
         }
 
         private void DrawScore(SpriteBatch spriteBatch,int score,float startPosX)

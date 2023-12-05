@@ -16,7 +16,7 @@ namespace TexRunner.Entities
         public abstract Rectangle CollisionBox { get; }
 
         public int DrawOrder {get; set;}
-        public Vector2 Position { get; private set;}
+        public Vector2 Position { get; protected set;}
 
         global::System.Drawing.Rectangle ICollidable.CollisionBox => throw new global::System.NotImplementedException();
 

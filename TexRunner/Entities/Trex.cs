@@ -42,6 +42,7 @@ namespace TexRunner.Entities
         public const float MAX_SPEED = 900f;
         private const float ACCELERATION_PPS_PER_SECOND = 5f;
         private const int COLLISION_BOX_INSET = 3;
+        private const int DUCK_COLLISION_REDUCTION = 20;
         private Sprite _idleSprite;
         private Sprite _idleBlinkSprite;
         private Sprite _deadSprite;
@@ -67,6 +68,11 @@ namespace TexRunner.Entities
             {
                 Rectangle box= new Rectangle((int)Math.Round(Position.X), (int)Math.Round(Position.Y), TREX_DEFAULT_SPRITE_WIDTH, TREX_DEFAULT_SPRITE_HEIGHT);
                 box.Inflate(-COLLISION_BOX_INSET, -COLLISION_BOX_INSET);
+                if(State==TrexState.Ducking)
+                {
+                    box.Y += DUCK_COLLISION_REDUCTION;
+                    box.Height -= DUCK_COLLISION_REDUCTION;
+                }
                 return box;
             }
         }

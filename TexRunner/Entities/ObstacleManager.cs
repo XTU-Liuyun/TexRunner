@@ -7,6 +7,8 @@ namespace TexRunner.Entities
 {
     public class ObstacleManager : IGameEntity
     {
+
+        private static readonly int[] FLYING_DINO_Y_POSITTIONS = new int[] { 90, 62,24 };
         private const float MIN_SPAWN_DISTANCE = 20;
         private const int MIN_OBSTACLE_DISTANCE = 10;
         private const int MAX_OBSTACLE_DISTANCE = 50;
@@ -67,10 +69,23 @@ namespace TexRunner.Entities
         private void SpawnRandomObstacle()
         {
             Obstacle obstacle = null;
-            CactusGroup.GroupSize randomGroupSize =(CactusGroup.GroupSize)_random.Next((int)CactusGroup.GroupSize.Small,(int)CactusGroup.GroupSize.Large+1);
-            bool isLarge = _random.NextDouble() > 0.5f;
-            float posY = isLarge ? LARGE_CACTUS_POS_Y : SMALL_CACTUS_POS_Y;
-            obstacle = new CactusGroup(_spriteSheet,isLarge,randomGroupSize,_trex,new Vector2(TexGunnerGame.WINDOW_WIDTH,posY));
+            int cactusGroupSpawnRate = 75;
+            int flyingDinoSpawnRate = _scoreBoard.Score >= FLYING_DINO_SPAWN_SCORE_MIN ? 25 : 0;
+            int rng=_random.Next(0, cactusGroupSpawnRate + flyingDinoSpawnRate + 1);
+            if(rng<=cactusGroupSpawnRate)
+            {
+                CactusGroup.GroupSize randomGroupSize = (CactusGroup.GroupSize)_random.Next((int)CactusGroup.GroupSize.Small, (int)CactusGroup.GroupSize.Large + 1);
+                bool isLarge = _random.NextDouble() > 0.5f;
+                float posY = isLarge ? LARGE_CACTUS_POS_Y : SMALL_CACTUS_POS_Y;
+                obstacle = new CactusGroup(_spriteSheet, isLarge, randomGroupSize, _trex, new Vector2(TexGunnerGame.WINDOW_WIDTH, posY));
+            }
+            else
+            {
+                int verticalPosIndex = _random.Next(0, FLYING_DINO_Y_POSITTIONS.Length);
+
+                float posY = FLYING_DINO_Y_POSITTIONS[verticalPosIndex];
+                obstacle = new FlyingDino(_trex, new Vector2(TexGunnerGame.WINDOW_WIDTH,posY), _spriteSheet);
+            }
             obstacle.DrawOrder = OBSTACLE_DRAW_ORDER;
             _entityManager.AddEntity(obstacle);
 

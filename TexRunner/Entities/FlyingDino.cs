@@ -17,8 +17,10 @@ namespace TexRunner.Entities
         private const int SPRITE_WIDTH = 46;
         private const int SPRITE_HEIGHT = 42;
 
-        private const int VERTICAL_COLLISION_INSET = 8;
+        private const int VERTICAL_COLLISION_INSET = 10;
         private const int HORIZONTAL_COLLISION_INSET = 6;
+
+        private const float SPEED_PPS = 80f;
 
         private SpriteAnimation _animation;
         private Trex _trex;
@@ -52,10 +54,12 @@ namespace TexRunner.Entities
         }
         public override void Update(GameTime gameTime)
         {
-            base.Update(gameTime);  
+            base.Update(gameTime);
+           
             if(_trex.IsAlive)
             {
                 _animation.Update(gameTime);
+                Position = new Vector2(Position.X - SPEED_PPS * (float)gameTime.ElapsedGameTime.TotalSeconds, Position.Y);
             }
             
         }
