@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TexRunner")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+115355dbd016122e7257588f9fe7cfd0d066f4ba")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
 [assembly: System.Reflection.AssemblyProductAttribute("TexRunner")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TexRunner")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
