@@ -18,11 +18,7 @@ namespace TexRunner.Entities
         private const int SPRITE_HEIGHT = 40;
 
         private const int SPRITE_COUNT = 7;
-        public interface IDayNightCycle
-        {
-            int NightCount { get; }
-            bool IsNight {  get; }  
-        }
+        
         private readonly IDayNightCycle _dayNightCycle;
         public override float Speed => _trex.Speed * 0.1f;
         private Sprite _sprite;
@@ -35,11 +31,29 @@ namespace TexRunner.Entities
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            
+            UpdateSprite();
+            if (_dayNightCycle.IsNight)
+            {
+                _sprite.Draw(spriteBatch, Position);
+            }
         }
         private void UpdateSprite()
         {
-
+            int spriteIndex= _dayNightCycle.NightCount % SPRITE_COUNT;
+            int spriteWidth = SPRITE_WIDTH;
+            int spriteHeight = SPRITE_HEIGHT;   
+            if(spriteIndex == 3) 
+            {
+                spriteWidth *= 2;
+            }
+            if(spriteIndex>=3)
+            {
+                spriteIndex++;
+            }
+            _sprite.Height=spriteHeight;
+            _sprite.Width=spriteWidth;
+            _sprite.X = RIGHTMOST_SPRITE_COORDS_X - spriteIndex * SPRITE_WIDTH;
+            _sprite.Y = RIGHRMOST_SPRITE_COORDS_Y;
         }
     }
 }

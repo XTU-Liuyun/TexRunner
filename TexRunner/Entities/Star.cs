@@ -18,9 +18,11 @@ namespace TexRunner.Entities
        
         private const float ANIMATION_FRAME_LENGTH = 0.4f;
         private SpriteAnimation _animation;
+        private IDayNightCycle _dayNightCycle;
         
-        public Star(Texture2D spriteSheet,Trex trex, Vector2 position) : base(trex, position)
+        public Star(IDayNightCycle dayNightCycle,Texture2D spriteSheet,Trex trex, Vector2 position) : base(trex, position)
         {
+            _dayNightCycle = dayNightCycle; 
             _animation =SpriteAnimation.CreateSimpleAnimation(spriteSheet,
                 new Point(INITIAL_FRAME_TEXTURE_COORDS_X,INITIAL_FRAME_TEXTURE_COORDS_Y),
                 SPRITE_WIDTH,
@@ -41,7 +43,10 @@ namespace TexRunner.Entities
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            _animation.Draw(spriteBatch, Position);
+            if (_dayNightCycle.IsNight)
+            {
+                _animation.Draw(spriteBatch, Position);
+            }
         }
     }
 }

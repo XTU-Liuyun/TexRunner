@@ -26,7 +26,7 @@ namespace TexRunner.Entities
         private const int LARGE_CACTUS_TEXTURE_POS_X = 332;
         private const int LARGE_CACTUS_TEXTURE_POS_Y = 0;
 
-        private const int COLLISION_BOX_INSET = 3;
+        private const int COLLISION_BOX_INSET = 5;
 
         public override Rectangle CollisionBox
         {
