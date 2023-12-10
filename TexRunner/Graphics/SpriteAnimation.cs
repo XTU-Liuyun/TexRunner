@@ -20,6 +20,7 @@ namespace TexRunner.Graphics
             }
 
         }
+        public int FrameCount=>_frames.Count;   
         public SpriteAnimationFrame CurrentFrame
         {
             get

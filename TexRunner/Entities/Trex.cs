@@ -11,7 +11,7 @@ using TexRunner.Graphics;
 
 namespace TexRunner.Entities
 {
-    public class Trex : IGameEntity, ICollidable
+    public class Trex : IGameEntity, ICollidable,ITextureInverible
     {
         private const float MIN_JUMP_HEIGHT = 35f;
         private const float GRAVITY = 1600f;
@@ -260,6 +260,25 @@ namespace TexRunner.Entities
             IsAlive = false;
             
             return true;
+        }
+
+        public void UpdateTexture(Texture2D newTexture)
+        {
+            _idleSprite.Texture = newTexture;
+            _idleBlinkSprite.Texture = newTexture;
+            this._deadSprite.Texture = newTexture;
+            for(int i=0;i<_blinkAnimation.FrameCount;i++)
+            {
+                _blinkAnimation.GetFrame(i).Sprite.Texture = newTexture;    
+            }
+            for(int i=0;i<_duckAnimation.FrameCount;i++) 
+            {
+                _duckAnimation.GetFrame(i).Sprite.Texture = newTexture;
+            }
+            for(int i=0;i<_runAnimation.FrameCount;i++)
+            {
+                _runAnimation.GetFrame(i).Sprite.Texture = newTexture;  
+            }
         }
     }
 }

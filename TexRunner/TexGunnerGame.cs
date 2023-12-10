@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using TexRunner.Entities;
+using TexRunner.Extensions;
 using TexRunner.Graphics;
 using TexRunner.System;
 
@@ -23,6 +24,7 @@ namespace TexRunner
         private SoundEffect _sfxScoreReached;
         private Texture2D _spriteSheetTexture;
         private Texture2D _fadeInTexture;
+        private Texture2D _invertSpriteSheet;
         
         private float _fadeInTexturePosX;
         private Trex _trex;
@@ -71,7 +73,10 @@ namespace TexRunner
             _sfxButtonPress = Content.Load<SoundEffect>(ASSET_NAME_SFX_BUTTON_PRESS);
             _sfxScoreReached = Content.Load<SoundEffect>(ASSET_NAME_SFX_SCORE_REACHED);
             _sfxHit = Content.Load<SoundEffect>(ASSET_NAME_SFX_HIT);
+            
             _spriteSheetTexture = Content.Load<Texture2D>(ASSET_NAME_SPRITESHEET);
+            _invertSpriteSheet = _spriteSheetTexture.InvertColors(Color.Transparent);
+            
             _fadeInTexture = new Texture2D(GraphicsDevice, 1, 1);
             _fadeInTexture.SetData(new Color[] { Color.White}) ;
             _trex = new Trex(_spriteSheetTexture, new Vector2(TREX_START_POS_X, TREX_START_POS_Y-Trex.TREX_DEFAULT_SPRITE_HEIGHT),_sfxButtonPress);
@@ -84,7 +89,7 @@ namespace TexRunner
             _inputController = new InputController(_trex);
             _groundManager = new GroundManager(_spriteSheetTexture, _entityManager,_trex);
             _obstacleManager=new ObstacleManager(_entityManager,_trex,_scoreBoard,_spriteSheetTexture);
-            _skyManager = new SkyManager(_trex, _spriteSheetTexture, _entityManager, _scoreBoard);
+            _skyManager = new SkyManager(_trex, _spriteSheetTexture,_invertSpriteSheet, _entityManager, _scoreBoard);
             _gameOverScreen = new GameOverScreen(_spriteSheetTexture,this);
             _gameOverScreen.Position = new Vector2(WINDOW_WIDTH / 2 - GameOverScreen.GAME_OVER_SPRITE_WIDTH / 2, WINDOW_HEIGHT / 2 - 30);
             
@@ -148,9 +153,17 @@ namespace TexRunner
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.White);
-
+            if(_skyManager == null)
+            {
+                GraphicsDevice.Clear(Color.White);
+            }
+            else
+            {
+                GraphicsDevice.Clear(_skyManager.ClearColor);
+            }
+            //Console.WriteLine(_skyManager.ClearColor);
             _spriteBatch.Begin();
+            
             _entityManager.Draw(gameTime, _spriteBatch);
             if(State==GameState.Initial||State==GameState.Transition)
             {

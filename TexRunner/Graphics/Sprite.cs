@@ -11,7 +11,7 @@ namespace TexRunner.Graphics
     public class Sprite
     {
         
-        public Texture2D texture {  get; private set; } 
+        public Texture2D Texture {  get; set; } 
         public int X {  get; set; }
         public int Y { get; set; }
         public int Width { get; set; }  
@@ -19,7 +19,7 @@ namespace TexRunner.Graphics
         public Color TintColor {  get; set; }   =Color.White;
         public Sprite(Texture2D texture, int x, int y, int width, int height)
         {
-            this.texture = texture;
+            this.Texture = texture;
             X = x;
             Y = y;
             Width = width;
@@ -27,7 +27,7 @@ namespace TexRunner.Graphics
         }
         public void Draw(SpriteBatch spriteBatch,Vector2 position) 
         {
-            spriteBatch.Draw(texture, position, new Rectangle(X, Y, Width, Height), TintColor);
+            spriteBatch.Draw(Texture, position, new Rectangle(X, Y, Width, Height), TintColor);
         }
     }
 }

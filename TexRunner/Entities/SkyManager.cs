@@ -44,23 +44,27 @@ namespace TexRunner.Entities
 
         public bool IsNight => _normalizedScreenColor<0.5f;
 
+        public Color ClearColor => new Color(_normalizedScreenColor, _normalizedScreenColor, _normalizedScreenColor);
+
         private readonly EntityManager _entityManager;
         private readonly ScoreBoard _scoreBoard;
         private readonly Trex _trex;
         private Texture2D _spriteSheet;
+        private Texture2D _invertedSpriteSheet;
         private Moon _moon;
         private double _lastCloudSpawnScore = -1;
         private int _targetCloudDistance;
         private int _targetStarDistance;
         private Random _random;
 
-        public SkyManager(Trex trex,Texture2D spriteSheet,EntityManager entityManager,ScoreBoard scoreBoard) 
+        public SkyManager(Trex trex,Texture2D spriteSheet,Texture2D invertedSpriteSheet,EntityManager entityManager,ScoreBoard scoreBoard) 
         {
             _entityManager = entityManager;
             this._scoreBoard = scoreBoard;
             _random = new Random();
             this._trex = trex;
             _spriteSheet = spriteSheet;
+            _invertedSpriteSheet = invertedSpriteSheet; 
             
         } 
 
@@ -90,11 +94,15 @@ namespace TexRunner.Entities
                     _entityManager.RemoveEntity(skyObject);
                 }
             }
-            if(_previousScore/NIGHT_TIME_SCORE!=_scoreBoard.DisplayScore/NIGHT_TIME_SCORE)
+            if(_previousScore!=0&&_previousScore<_scoreBoard.DisplayScore&&_previousScore/NIGHT_TIME_SCORE!=_scoreBoard.DisplayScore/NIGHT_TIME_SCORE)
             {
                 TransitionToNightTime();
             }
             if(IsNight&&(_scoreBoard.DisplayScore-_nightTimeStartScore>=NIGHT_TIME_DURATION_SCORE))
+            {
+                TransitionToDayTime();
+            }
+            if(_scoreBoard.DisplayScore<NIGHT_TIME_SCORE&&(IsNight||_isTransitioningToNight))
             {
                 TransitionToDayTime();
             }
@@ -106,20 +114,35 @@ namespace TexRunner.Entities
             if(_isTransitioningToNight)
             {
                 _normalizedScreenColor -= (float)gameTime.ElapsedGameTime.TotalSeconds / TRANSITION_DURATION;
-                if(_normalizedScreenColor >1)
+                if(_normalizedScreenColor <0)
                 {
-                    _normalizedScreenColor = 1;
+                    _normalizedScreenColor = 0;
+                }
+                if(_normalizedScreenColor<0.5f)
+                {
+                    InvertTextures(_invertedSpriteSheet);
                 }
             }
             else if(_isTransitioningToDay)
             {
                 _normalizedScreenColor += (float)gameTime.ElapsedGameTime.TotalSeconds / TRANSITION_DURATION;
-                if (_normalizedScreenColor < 0)
+                if (_normalizedScreenColor >1)
                 {
-                    _normalizedScreenColor = 0;
+                    _normalizedScreenColor = 1;
+                }
+                if(_normalizedScreenColor>=0.5f)
+                {
+                    InvertTextures(_spriteSheet);   
                 }
             }
             
+        }
+        private void InvertTextures(Texture2D texture)
+        {
+            foreach (ITextureInverible texInv in _entityManager.GetEntitiesOfType<ITextureInverible>())
+            {
+                texInv.UpdateTexture(texture);
+            }
         }
         private bool TransitionToNightTime()
         {
