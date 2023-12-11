@@ -75,8 +75,11 @@ namespace TexRunner.Entities
 
                 DrawScore(spriteBatch, HighScore, Position.X);
             }
-            if (!_isPlayingFlashAnimation || (int)(_flashAnimationTime / FLASH_ANIMATION_FRAME_LENGTH) % 2 != 0) 
-                DrawScore(spriteBatch, DisplayScore, Position.X + SCORE_MARGIN);
+            if (!_isPlayingFlashAnimation || (int)(_flashAnimationTime / FLASH_ANIMATION_FRAME_LENGTH) % 2 != 0)
+            {
+                int score = _isPlayingFlashAnimation ? DisplayScore : (DisplayScore / 100 * 100);
+                DrawScore(spriteBatch, score, Position.X + SCORE_MARGIN);
+            }
         }
 
         private void DrawScore(SpriteBatch spriteBatch,int score,float startPosX)

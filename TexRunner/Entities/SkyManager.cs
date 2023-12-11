@@ -9,8 +9,9 @@ using System.Threading.Tasks;
 
 namespace TexRunner.Entities
 {
-    public class SkyManager : IGameEntity,IDayNightCycle
+    public class SkyManager : IGameEntity, IDayNightCycle
     {
+        private const float EPSILION = 0.01f;
         private const int CLOUD_DRAW_ORDER = -1;
         private const int STAR_DRAW_ORDER = -3;
         private const int MOON_DRAW_ORDER = -2;
@@ -35,15 +36,22 @@ namespace TexRunner.Entities
         private float _normalizedScreenColor = 1f;
         private int _previousScore;
         private int _nightTimeStartScore;
-        private bool _isTransitioningToNight=false;
+        private bool _isTransitioningToNight = false;
         private bool _isTransitioningToDay = false;
 
-        public int DrawOrder => 0;
+        public int DrawOrder =>int.MaxValue;
 
-        public int NightCount {get;private set;}    
+        public int NightCount { get; private set; }
 
-        public bool IsNight => _normalizedScreenColor<0.5f;
+        public bool IsNight => _normalizedScreenColor < 0.5f;
 
+        private float OverlayTransparency
+        {
+            get
+            {
+                return MathHelper.Clamp((0.25f - MathHelper.Distance(0.5f, _normalizedScreenColor)) / 0.25f, 0, 1);
+            }
+        }
         public Color ClearColor => new Color(_normalizedScreenColor, _normalizedScreenColor, _normalizedScreenColor);
 
         private readonly EntityManager _entityManager;
@@ -52,11 +60,13 @@ namespace TexRunner.Entities
         private Texture2D _spriteSheet;
         private Texture2D _invertedSpriteSheet;
         private Moon _moon;
+        private Texture2D _overlay;
         private double _lastCloudSpawnScore = -1;
         private int _targetCloudDistance;
         private int _targetStarDistance;
         private Random _random;
-
+        private Color[] _textureData;
+        private Color[] _invertedTextureData;
         public SkyManager(Trex trex,Texture2D spriteSheet,Texture2D invertedSpriteSheet,EntityManager entityManager,ScoreBoard scoreBoard) 
         {
             _entityManager = entityManager;
@@ -64,13 +74,22 @@ namespace TexRunner.Entities
             _random = new Random();
             this._trex = trex;
             _spriteSheet = spriteSheet;
-            _invertedSpriteSheet = invertedSpriteSheet; 
-            
+            _invertedSpriteSheet = invertedSpriteSheet;
+            _textureData=new Color[_spriteSheet.Width*_spriteSheet.Height];
+            _invertedTextureData = new Color[_invertedSpriteSheet.Width * _invertedSpriteSheet.Height];
+            _spriteSheet.GetData(_textureData);
+            _invertedSpriteSheet.GetData(_invertedTextureData);
+            _overlay = new Texture2D(spriteSheet.GraphicsDevice, 1, 1);
+            Color[] overlayData = new Color[] { Color.Gray };
+            _overlay.SetData(overlayData);
         } 
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            
+            if (OverlayTransparency > EPSILION)
+            {
+                spriteBatch.Draw(_overlay, new Rectangle(0, 0, TexGunnerGame.WINDOW_WIDTH, TexGunnerGame.WINDOW_HEIGHT), Color.White * OverlayTransparency);
+            }
         }
 
         public void Update(GameTime gameTime)
@@ -120,7 +139,7 @@ namespace TexRunner.Entities
                 }
                 if(_normalizedScreenColor<0.5f)
                 {
-                    InvertTextures(_invertedSpriteSheet);
+                    InvertTextures();
                 }
             }
             else if(_isTransitioningToDay)
@@ -132,16 +151,20 @@ namespace TexRunner.Entities
                 }
                 if(_normalizedScreenColor>=0.5f)
                 {
-                    InvertTextures(_spriteSheet);   
+                    InvertTextures();   
                 }
             }
             
         }
-        private void InvertTextures(Texture2D texture)
+        private void InvertTextures()
         {
-            foreach (ITextureInverible texInv in _entityManager.GetEntitiesOfType<ITextureInverible>())
+            if(IsNight)
             {
-                texInv.UpdateTexture(texture);
+                _spriteSheet.SetData(_invertedTextureData);
+            }
+            else
+            {
+                _spriteSheet.SetData(_textureData);
             }
         }
         private bool TransitionToNightTime()
