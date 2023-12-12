@@ -40,7 +40,7 @@ namespace TexRunner.Entities
         private const float RUN_ANIMATION_FRAME_LENGTH = 1 / 10f;
         public const float START_SPEED = 280f;
         public const float MAX_SPEED = 900f;
-        private const float ACCELERATION_PPS_PER_SECOND = 5f;
+        private const float ACCELERATION_PPS_PER_SECOND = 3f;
         private const int COLLISION_BOX_INSET = 3;
         private const int DUCK_COLLISION_REDUCTION = 20;
         private Sprite _idleSprite;

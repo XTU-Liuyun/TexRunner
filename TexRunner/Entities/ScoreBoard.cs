@@ -23,13 +23,17 @@ namespace TexRunner.Entities
         private const int HI_TEXT_MARGIN=28;
 
         private const int SCORE_MARGIN = 60;
-        private const float SCORE_INCREMENT_MULTIPLIER = 0.05f;
+        private const float SCORE_INCREMENT_MULTIPLIER = 0.025f;
         private const float FLASH_ANIMATION_FRAME_LENGTH = 0.2f;
         private const int FLASH_ANIMATION_FLASH_COUNT = 4;
+        private const int MAX_SCORE = 99_999;
         private Texture2D _texture;
 
         private SoundEffect _scoreSfx;
-        public double Score { get; set; }   
+        public double Score { 
+            get => _score; 
+            set => _score = Math.Max(0, Math.Min(value, MAX_SCORE)); 
+        }
         public int DisplayScore=>(int)Math.Floor((double)Score);    
         public int HighScore {  get; set; }
         public bool HasHighScore => HighScore > 0;
@@ -40,6 +44,8 @@ namespace TexRunner.Entities
 
         private bool _isPlayingFlashAnimation;
         private float _flashAnimationTime;
+        private double _score;
+
         public ScoreBoard(Texture2D texture,Vector2 position,Trex trex,SoundEffect scoreSfx)
         {
             _scoreSfx = scoreSfx;
@@ -71,13 +77,15 @@ namespace TexRunner.Entities
             DrawScore(spriteBatch,DisplayScore,Position.X+ SCORE_MARGIN);
             if (HasHighScore)
             {
+                Console.WriteLine("ok2");
                 spriteBatch.Draw(_texture, new Vector2(Position.X - HI_TEXT_MARGIN, Position.Y), new Rectangle(TEXTURE_COORDS_HI_X, TEXTURE_COORDS_HI_Y, TEXTURE_COORDS_HI_WIDTH, TEXTURE_COORDS_HI_HEIGHT), Color.White);
 
                 DrawScore(spriteBatch, HighScore, Position.X);
             }
             if (!_isPlayingFlashAnimation || (int)(_flashAnimationTime / FLASH_ANIMATION_FRAME_LENGTH) % 2 != 0)
             {
-                int score = _isPlayingFlashAnimation ? DisplayScore : (DisplayScore / 100 * 100);
+                //Console.WriteLine("ok1");
+                int score = _isPlayingFlashAnimation ?  (DisplayScore / 100 * 100):DisplayScore;
                 DrawScore(spriteBatch, score, Position.X + SCORE_MARGIN);
             }
         }

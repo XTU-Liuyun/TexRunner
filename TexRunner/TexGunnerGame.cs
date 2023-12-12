@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using TexRunner.Entities;
 using TexRunner.Extensions;
 using TexRunner.Graphics;
@@ -36,12 +38,14 @@ namespace TexRunner
         public const int TREX_START_POS_Y= WINDOW_HEIGHT-16;
         private const int SCORE_BOARD_POS_X = WINDOW_WIDTH-130;
         private const int SCORE_BOARD_POS_Y = 10;
+        private const string SAVE_FILE_NAME = "Save.dat";
         private GroundManager _groundManager;
         private EntityManager _entityManager;
         private SkyManager _skyManager;
         private ObstacleManager _obstacleManager;
         private GameOverScreen _gameOverScreen;
         private KeyboardState _previousKeyBoardState;
+        private DateTime _highscoreDate;
         public GameState State { get; private set; }    
         public TexGunnerGame()
         {
@@ -100,6 +104,8 @@ namespace TexRunner
             _entityManager.AddEntity(_gameOverScreen);
             _entityManager.AddEntity(_skyManager);
             _groundManager.Initialize();
+
+            LoadSaveState();
         }
 
         private void trex_Died(object sender, EventArgs e)
@@ -109,6 +115,13 @@ namespace TexRunner
             _sfxHit.Play(); 
             _obstacleManager.IsEnabled= false;
             _gameOverScreen.IsEnabled = true;
+            if (_scoreBoard.DisplayScore>_scoreBoard.HighScore)
+            {
+                Console.WriteLine("New highscore set:" + _scoreBoard.DisplayScore);
+                _scoreBoard.HighScore = _scoreBoard.DisplayScore;   
+                _highscoreDate=DateTime.Now;
+                SaveGame();
+            }
         }
 
         private void trex_JumpComplete(object sender, EventArgs e)
@@ -182,6 +195,7 @@ namespace TexRunner
             {
                 return false;
             }
+            _scoreBoard.Score = 0;
             State = GameState.Transition;
             _trex.BeginJump();
             return true;
@@ -199,6 +213,49 @@ namespace TexRunner
             _groundManager.Initialize();
             _inputController.BlockInputTemporarily();
             return true;
+        }
+        public void SaveGame()
+        {
+            SaveState saveState = new SaveState()
+            {
+                Highscore = _scoreBoard.HighScore,
+                HighscoreDate = _highscoreDate
+            };
+            try
+            {
+                using (FileStream fileStream = new FileStream(SAVE_FILE_NAME, FileMode.Create))
+                {
+                    BinaryFormatter binaryFormatter = new BinaryFormatter();    
+                    binaryFormatter.Serialize(fileStream, saveState);
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("An error occurred while saving the game:" + ex.Message);
+            }
+        }
+        public void LoadSaveState()
+        {
+            try
+            {
+                using (FileStream fileStream = new FileStream(SAVE_FILE_NAME, FileMode.OpenOrCreate))
+                {
+                    BinaryFormatter binaryFormatter = new BinaryFormatter();
+                    SaveState saveState=binaryFormatter.Deserialize(fileStream) as SaveState;
+                    if (saveState != null)
+                    {
+                        if (_scoreBoard != null)
+                        {
+                            _scoreBoard.HighScore = saveState.Highscore;
+                        }
+                        _highscoreDate=saveState.HighscoreDate;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("An error occurred while loading the game:" + ex.Message);
+            }
         }
     }
 }
