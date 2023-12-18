@@ -10,8 +10,8 @@ namespace TexRunner.Entities
 
         private static readonly int[] FLYING_DINO_Y_POSITTIONS = new int[] { 90, 62,24 };
         private const float MIN_SPAWN_DISTANCE = 20;
-        private const int MIN_OBSTACLE_DISTANCE = 10;
-        private const int MAX_OBSTACLE_DISTANCE = 50;
+        private const int MIN_OBSTACLE_DISTANCE = 6;
+        private const int MAX_OBSTACLE_DISTANCE = 28;
         private const int OBSTACLE_DISTANCE_SPEED_TOLERANCE = 5;
         private const int LARGE_CACTUS_POS_Y = 80;
         private const int SMALL_CACTUS_POS_Y = 94;

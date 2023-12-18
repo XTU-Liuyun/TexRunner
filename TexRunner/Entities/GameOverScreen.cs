@@ -34,7 +34,7 @@ namespace TexRunner.Entities
 
         private Vector2 ButtonPosition => Position + new Vector2(GAME_OVER_SPRITE_WIDTH / 2 - BUTTON_SPRITE_WIDTH / 2, GAME_OVER_SPRITE_HEIGHT + 20);
 
-        private Rectangle ButtonBounds => new Rectangle(ButtonPosition.ToPoint(), new Point(BUTTON_SPRITE_WIDTH, BUTTON_SPRITE_HEIGHT));
+        private Rectangle ButtonBounds => new Rectangle((ButtonPosition * _game.ZoomFactor).ToPoint(), new Point(BUTTON_SPRITE_WIDTH*(int)_game.ZoomFactor, BUTTON_SPRITE_HEIGHT*(int)_game.ZoomFactor));
 
         public GameOverScreen(Texture2D spriteSheet,TexGunnerGame game)
         {

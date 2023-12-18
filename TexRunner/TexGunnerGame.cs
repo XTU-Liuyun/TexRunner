@@ -14,6 +14,12 @@ namespace TexRunner
 {
     public class TexGunnerGame : Game
     {
+        public enum DisplayMode
+        {
+            Default,
+            Zoomed
+        }
+        private const string GAME_TITLE = "T-Rex Runner";
         private const string ASSET_NAME_SPRITESHEET = "TrexSpritesheet";
         private const string ASSET_NAME_SFX_HIT = "hit"; 
         private const string ASSET_NAME_SFX_SCORE_REACHED = "score-reached";
@@ -39,6 +45,7 @@ namespace TexRunner
         private const int SCORE_BOARD_POS_X = WINDOW_WIDTH-130;
         private const int SCORE_BOARD_POS_Y = 10;
         private const string SAVE_FILE_NAME = "Save.dat";
+        public const int DISPLAY_ZOOM_FACTOR = 2;
         private GroundManager _groundManager;
         private EntityManager _entityManager;
         private SkyManager _skyManager;
@@ -46,7 +53,10 @@ namespace TexRunner
         private GameOverScreen _gameOverScreen;
         private KeyboardState _previousKeyBoardState;
         private DateTime _highscoreDate;
-        public GameState State { get; private set; }    
+        private Matrix _transformMatrix=Matrix.Identity;
+        public GameState State { get; private set; }
+        public DisplayMode WindeoDisplayMode { get; private set; } = DisplayMode.Default;
+        public float ZoomFactor => WindeoDisplayMode == DisplayMode.Default ? 1 : DISPLAY_ZOOM_FACTOR;
         public TexGunnerGame()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -63,10 +73,12 @@ namespace TexRunner
             // TODO: Add your initialization logic here
 
             base.Initialize();
+            Window.Title = GAME_TITLE;
             _graphics.PreferredBackBufferWidth = WINDOW_WIDTH;
             _graphics.PreferredBackBufferHeight = WINDOW_HEIGHT;
-            
+            _graphics.SynchronizeWithVerticalRetrace = true;    
             _graphics.ApplyChanges();
+
         }
 
         protected override void LoadContent()
@@ -144,6 +156,14 @@ namespace TexRunner
             base.Update(gameTime);
             KeyboardState keyboardState = Keyboard.GetState();
             _entityManager.Update(gameTime);
+            if(keyboardState.IsKeyDown(Keys.F8)&&!_previousKeyBoardState.IsKeyDown(Keys.F8))
+            {
+                ResetSaveState();   
+            }
+            if (keyboardState.IsKeyDown(Keys.F12) && !_previousKeyBoardState.IsKeyDown(Keys.F12))
+            {
+                ToggleDisplayMode();    
+            }
             if (State == GameState.Playing)
             {
                 _inputController.ProcessControls(gameTime);
@@ -175,7 +195,7 @@ namespace TexRunner
                 GraphicsDevice.Clear(_skyManager.ClearColor);
             }
             //Console.WriteLine(_skyManager.ClearColor);
-            _spriteBatch.Begin();
+            _spriteBatch.Begin(samplerState:SamplerState.PointClamp,transformMatrix:_transformMatrix);
             
             _entityManager.Draw(gameTime, _spriteBatch);
             if(State==GameState.Initial||State==GameState.Transition)
@@ -256,6 +276,30 @@ namespace TexRunner
             {
                 Console.WriteLine("An error occurred while loading the game:" + ex.Message);
             }
+        }
+        private void ResetSaveState()
+        {
+            _scoreBoard.HighScore = 0;
+            _highscoreDate=default(DateTime);
+            SaveGame();
+        }
+        private void ToggleDisplayMode()
+        {
+            if (WindeoDisplayMode==DisplayMode.Default)
+            {
+                WindeoDisplayMode= DisplayMode.Zoomed;
+                _graphics.PreferredBackBufferWidth = WINDOW_WIDTH*DISPLAY_ZOOM_FACTOR;
+                _graphics.PreferredBackBufferHeight = WINDOW_HEIGHT*DISPLAY_ZOOM_FACTOR;
+                _transformMatrix = Matrix.Identity * Matrix.CreateScale(DISPLAY_ZOOM_FACTOR, DISPLAY_ZOOM_FACTOR, 0);
+            }
+            else
+            {
+                WindeoDisplayMode = DisplayMode.Default;
+                _graphics.PreferredBackBufferWidth = WINDOW_WIDTH;
+                _graphics.PreferredBackBufferHeight = WINDOW_HEIGHT;
+                _transformMatrix = Matrix.Identity;
+            }
+            _graphics.ApplyChanges();
         }
     }
 }
